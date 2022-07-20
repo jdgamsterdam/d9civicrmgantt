@@ -1,0 +1,163 @@
+activity_people:
+  '#type': fieldset
+  '#title': 'Activity People'
+  flexbox1:
+    '#type': flexbox
+    '#align_items': flex-end
+    civicrm_1_contact_1_contact_existing:
+      '#type': civicrm_contact
+      '#title': 'Activity Creator'
+      '#title_display': none
+      '#widget': hidden
+      '#none_prompt': '- None Found -'
+      '#show_hidden_contact': 1
+      '#results_display':
+        display_name: display_name
+      '#default': user
+      '#allow_url_autofill': false
+      '#contact_type': individual
+      '#form_key': civicrm_1_contact_1_contact_existing
+      '#parent': civicrm_1_contact_1_fieldset_fieldset
+      '#extra': {  }
+    civicrm_2_contact_1_contact_existing:
+      '#type': civicrm_contact
+      '#title': 'Assigned To'
+      '#widget': select
+      '#search_prompt': '- Choose existing -'
+      '#none_prompt': '- None Found -'
+      '#results_display':
+        display_name: display_name
+      '#default_relationship_to': '1'
+      '#default_relationship':
+        '': ''
+      '#filter_relationship_contact': ''
+      '#contact_type': individual
+      '#form_key': civicrm_2_contact_1_contact_existing
+      '#parent': civicrm_2_contact_1_fieldset_fieldset
+      '#extra': {  }
+    civicrm_1_activity_1_activity_activity_type_id:
+      '#type': civicrm_options
+      '#title': 'Activity Type - CANNOT be changed after initial creation of activity'
+      '#civicrm_live_options': 0
+      '#options':
+        1: Meeting
+        2: 'Phone Call'
+        3: Email
+        4: 'Outbound SMS'
+        5: 'Event Registration'
+        8: 'Membership Renewal'
+        9: 'Tell a Friend'
+        12: 'Inbound Email'
+        17: 'Membership Renewal Reminder'
+        19: 'Bulk Email'
+        22: 'Print/Merge Document'
+        34: 'Mass SMS'
+        40: 'Reminder Sent'
+        41: 'Export Accounting Batch'
+        42: 'Create Batch'
+        43: 'Edit Batch'
+        44: 'SMS delivery'
+        45: 'Inbound SMS'
+        46: Payment
+        47: Refund
+        48: 'Change Registration'
+        49: 'Downloaded Invoice'
+        50: 'Emailed Invoice'
+        51: 'Contact Merged'
+        52: 'Contact Deleted by Merge'
+        54: 'Failed Payment'
+      '#extra':
+        aslist: 1
+        multiple: 0
+      '#form_key': civicrm_1_activity_1_activity_activity_type_id
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#default_option': ''
+      '#default_value': ''
+civicrm_1_activity_1_fieldset_fieldset:
+  '#type': fieldset
+  '#title': Activity
+  '#form_key': civicrm_1_activity_1_fieldset_fieldset
+  flexbox_2:
+    '#type': flexbox
+    civicrm_1_activity_1_activity_subject:
+      '#type': textfield
+      '#form_key': civicrm_1_activity_1_activity_subject
+      '#extra':
+        width: 20
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#title': 'Activity Subject'
+    civicrm_1_activity_1_cg1_custom_2:
+      '#type': textfield
+      '#data_type': String
+      '#counter_type': character
+      '#counter_maximum': 255
+      '#counter_maximum_message': ' '
+      '#form_key': civicrm_1_activity_1_cg1_custom_2
+      '#extra':
+        width: 20
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#title': 'Activity Dependencies'
+    civicrm_1_activity_1_cg1_custom_3:
+      '#type': civicrm_options
+      '#title': 'Show On Gantt'
+      '#civicrm_live_options': 0
+      '#options':
+        1: 'Yes'
+        0: 'No'
+      '#default_value': '1'
+      '#extra':
+        aslist: 1
+        multiple: 0
+      '#form_key': civicrm_1_activity_1_cg1_custom_3
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#default_option': '1'
+    civicrm_1_activity_1_cg1_custom_1:
+      '#type': number
+      '#title': 'Percent Complete'
+      '#min': 0
+      '#max': 100
+      '#input_mask': '''alias'': ''percentage'''
+      '#counter_type': character
+      '#counter_maximum': 255
+      '#counter_maximum_message': ' '
+      '#data_type': Int
+      '#form_key': civicrm_1_activity_1_cg1_custom_1
+      '#extra':
+        width: 10
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+  datesfortask:
+    '#type': flexbox
+    civicrm_1_activity_1_activity_activity_date_time:
+      '#type': datetime
+      '#title': 'Activity Start'
+      '#default_value': now
+      '#date_date_format': ''
+      '#date_time_format': ''
+      '#date_time_step': '60'
+      '#form_key': civicrm_1_activity_1_activity_activity_date_time
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#extra': {  }
+    activity_end:
+      '#type': datetime
+      '#title': 'Activity End'
+      '#default_value': '[current-date:html_date]'
+      '#date_date_format': ''
+      '#date_time_format': ''
+      '#date_time_step': '60'
+    civicrm_1_activity_1_activity_duration:
+      '#type': computed_twig
+      '#field_suffix': min.
+      '#step': 5
+      '#form_key': civicrm_1_activity_1_activity_duration
+      '#parent': civicrm_1_activity_1_fieldset_fieldset
+      '#extra': {  }
+      '#title': 'Activity Duration'
+      '#template': |-
+        {% set startdate = data.civicrm_1_activity_1_activity_activity_date_time  %}
+        {% set startdateU = startdate | date('U') %}
+        {% set enddate = data.activity_end  %}
+        {% set enddateU = enddate | date('U') %}
+        {% set secondsdifference = enddateU-startdateU %}
+        {% set minutesdifference = secondsdifference/60 %}
+        {{ minutesdifference|round }}
+      '#ajax': true
