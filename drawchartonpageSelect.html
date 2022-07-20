@@ -1,0 +1,81 @@
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js">
+</script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages':['gantt']});
+</script>
+
+<script type="text/javascript">
+   //Global Variables
+
+   //Link to open activity to edit
+   let activityURL='/civicrm/activity/add?action=update&id=';
+
+   //link for data source in JSON format NOTE The documentation does not tell you that you have to ad the _format=json option
+   let ganttdataURL='/ganttrest?_format=json';
+</script>
+
+<script type="text/javascript">
+  //Get Data for drawChart
+
+  async function fetchText() {
+    let response = await fetch(ganttdataURL);
+    if (response.status === 200) {
+      let data = await response.text();
+      //If It gets the data correctly then can write Gantt Chart
+      google.charts.setOnLoadCallback(function() { drawChart(data); });
+    }
+  }
+  
+  fetchText();
+
+  function daysToMilliseconds(days) {
+    return days * 24 * 60 * 60 * 1000;
+  }
+  
+  function MinutesToMilliseconds(minutes) {
+    return minutes * 60 * 1000;
+  }
+  
+  function drawChart(chartdata) {  
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Task ID');
+    data.addColumn('string', 'Task Name');
+    data.addColumn('string', 'Resource');
+    data.addColumn('date', 'Start Date');
+    data.addColumn('date', 'End Date');
+    data.addColumn('number', 'Duration');
+    data.addColumn('number', 'Percent Complete');
+    data.addColumn('string', 'Dependencies');
+    //get Rows from View Data
+    var chartjsonparsed = JSON.parse(chartdata);
+
+
+    for (let i = 0; i < chartjsonparsed.length; i++) {
+        data.addRows([[chartjsonparsed[i].Task_ID, chartjsonparsed[i].Task_Name, chartjsonparsed[i].Resource,new Date(chartjsonparsed[i].Start_Date), new Date(chartjsonparsed[i].End_Date), MinutesToMilliseconds(chartjsonparsed[i].Duration), parseInt(chartjsonparsed[i].Percent_Complete), chartjsonparsed[i].Dependencies]]);
+    }
+  
+    var options = {
+      height: 275
+    };
+    var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+    //Add Selection Handler before Drawing
+    function selectHandler() {
+        var selectedItem = chart.getSelection()[0];
+        if (selectedItem) {
+          console.log(selectedItem);
+          //Below actually gets the first column of the selected row e.g. the ACtivity ID
+          var selectedID = data.getValue(selectedItem.row,0)
+          window.open(activityURL+selectedID, '_blank').focus();
+        }
+      }
+      // Listen for the 'select' event, and call my function selectHandler() when
+      // the user selects something on the chart.
+      google.visualization.events.addListener(chart, 'select', selectHandler);
+    chart.draw(data, options);
+  }
+
+</script>
+Hover over a task to see details.  Click on Task to Edit in Civicrm
+<div id="chart_div">&nbsp;
+</div>
